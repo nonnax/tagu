@@ -6,21 +6,22 @@ require_relative 'lib/tagu'
 s = Tagu.do do
   head do
     link(rel: 'stylesheet', src: '/css/style.css')
+    .and{ title 'this is the title' }
   end
     .and body {
            div(id: 'main', class: 'container') do
-             h1('this is the title')
+             h1('a header')
                .and  br
                .and  div(class: 'item') { span 'test' }
                .and  hr
                .and  div(class: 'item') {
-                       span { 'test 2' }
-                         .and span { p 'haha' }
-                     }
+                      p { span{ 'test 2' }.and span { p 'haha' } }
+                    }
            end
            .and p { 'footer' }
-           .and para(id: 'foot') { 'footer again' }
+           .and p(id: 'foot') { 'footer again' }
          }
 end
 
 puts s
+

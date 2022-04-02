@@ -11,26 +11,30 @@ class String
 end
 
 class Tagu
+  
+  OPENTAGS=%i[html head title style body div p span h1 h2 h3 h4 h5 b i strong em]
+  CLOSEDTAGS=%i[link meta br hr]
+  
   def self.do(&block)
     new.instance_eval(&block)
   end
 
   def tag(tag_name, text = nil, **params, &block)
-    []
     opts = params.to_a.inject([]) { |acc, (k, v)| acc << [k, %('#{v}')].join('=') }
 
-    if block || text
-      "<#{tag_name} #{opts.join(' ')}>\n#{text || block.call}\n</#{tag_name}>".gsub(/\s*>/, '>')
+    if [text, block].any?
+      content = text || block.call
+      "<#{tag_name} #{opts.join(' ')}>\n#{content}\n</#{tag_name}>".gsub(/\s*>/, '>')
     else
       "<#{tag_name} #{opts.join(' ')}/>"
     end
   end
 
-  %i[html head style body div p span h1 h2 h3 h4 h5 b i strong em para].each do |m|
+  OPENTAGS.each do |m|
     define_method(m) { |text = nil, **params, &block| tag(m, text, **params, &block) }
   end
   # no-body methods
-  %i[link meta br hr].each do |m|
+  CLOSEDTAGS.each do |m|
     define_method(m) { |text = nil, **params| tag(m, text, **params) }
   end
 end

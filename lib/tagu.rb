@@ -6,7 +6,6 @@
 require 'stringio'
 
 D=Object.method(:define_method)
-
 module Tagu
   extend self
   SINGLES, buffer, lev=%w[br hr link meta], StringIO.new, 0
@@ -20,27 +19,25 @@ module Tagu
     block.call
     lev-=1
   end
-  
-  D.(:tagu) do |&block|
-    Tagu.define(&block)
-  end
+  D.(:tagu){ |&block| Tagu.define(&block) }
 
   D.(:tag) do |m, *a, &block|
-    opts=a.grep(Hash).pop || {}
-    if SINGLES.include?(m.to_s)
-      buffer.puts "%s<%s%s/>" % [tab, m, Q(opts)]
-      return
-    end    
+    h=a.grep(Hash)
+    a-=h
+    opts=h.pop || {}
+    return buffer.puts "%s<%s%s/>" % [tab, m, Q(opts)] if SINGLES.include?(m.to_s) 
+        
     buffer.puts "%s<%s%s>" % [tab, m, Q(opts)]
     indent do
-      content=block.call 
+      content = a.pop
+      content = block.call if block
       buffer.puts "%s%s" % [tab, content] if content
     end
     buffer.puts "%s</%s>" % [tab, m]
   end
 
   %w[html head title body div p ul li style script h1 h2 h3 h4 h5 h6 a img span b i strong em br link hr meta].each do |m, **opts, &block|
-      D.(m.to_s+?!){ |**opts, &block| tag(m, **opts, &block) }  
+      D.(m.to_s+?!){ |*a, &block| tag(m, *a, &block) }  
   end
 end
 

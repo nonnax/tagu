@@ -8,24 +8,20 @@ require 'irb'
 tagu do
   html! do
     head! do
-      title!{ 'this is cool'}
+      title! 'this is cool'
       link! rel: 'stylesheet', href: '/css/style.css'
     end
     body! do
       div!(class: 'main') do
           br!
           hr!
-          a!( href: '/' ){ 'link'}
+          a!('link', href: '/' )
           p!(class: 'item') do
-            span! do
-              'what'
-            end
-            span! do
-              'who'
-            end
+            span! 'what', class: 'waklass'
+            span! 'who'
             ul! do 
-              li!{ 'first' }
-              li!{ 'last' }
+              li! 'first' 
+              li! 'last' 
             end
             'hi'
           end

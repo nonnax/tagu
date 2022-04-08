@@ -1,40 +1,39 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
+# Id$ nonnax 2022-04-08 18:25:31 +0800
+# Tagu non-magical html markup builder
+require 'stringio'
 
-# Id$ nonnax 2022-04-02 00:30:16 +0800
-# tagu : non-magical html markup builder
-#
-class String
-  def and(body = nil, &block)
-    self << "\n" << (body || block.call).to_s
-  end
-end
+D=Object.method(:define_method)
 
-class Tagu
+module Tagu
+  extend self
+  SINGLES, buffer, lev=%w[br hr link meta], StringIO.new, 0
   
-  OPENTAGS=%i[html head title style body div p span h1 h2 h3 h4 h5 b i strong em]
-  CLOSEDTAGS=%i[link meta br hr]
-  
-  def self.do(&block)
-    new.instance_eval(&block)
+  D.(:define){ |&block| instance_eval(&block) }
+  D.(:result){ buffer.string  }
+  D.(:Q){|h| h.inject(""){|acc, (k, v)| acc<<' '<<[k, "'#{v}'"].join('=')}}
+  D.(:tab){ "  "*lev }
+  D.(:indent) do |&block|
+    lev+=1
+    block.call
+    lev-=1
   end
 
-  def tag(tag_name, text = nil, **params, &block)
-    opts = params.to_a.inject([]) { |acc, (k, v)| acc << [k, %('#{v}')].join('=') }
-
-    if [text, block].any?
-      content = text || block.call
-      "<#{tag_name} #{opts.join(' ')}>\n#{content}\n</#{tag_name}>".gsub(/\s*>/, '>')
-    else
-      "<#{tag_name} #{opts.join(' ')}/>"
+  D.(:tag) do |m, **opts, &block|
+    if SINGLES.include?(m.to_s)
+      buffer.puts "%s<%s%s/>" % [tab, m, Q(opts)]
+      return
+    end    
+    buffer.puts "%s<%s%s>" % [tab, m, Q(opts)]
+    indent do
+      content=block.call
+      buffer.puts "%s%s" % [tab, content] if content
     end
+    buffer.puts "%s</%s>" % [tab, m]
   end
 
-  OPENTAGS.each do |m|
-    define_method(m) { |text = nil, **params, &block| tag(m, text, **params, &block) }
-  end
-  # no-body methods
-  CLOSEDTAGS.each do |m|
-    define_method(m) { |text = nil, **params| tag(m, text, **params) }
+  %w[html head body div p style script h1 h2 h3 h4 h5 h6 a img span b i strong em br link hr meta].each do |m, **opts, &block|
+      D.(m){ |**opts, &block| tag(m, **opts, &block) }  
   end
 end
+

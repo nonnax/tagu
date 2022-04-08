@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-04-08 18:25:31 +0800
 # Tagu non-magical html markup builder
+# include Tagu as needed
+# 
 require 'stringio'
 
 D=Object.method(:define_method)
@@ -18,6 +20,10 @@ module Tagu
     block.call
     lev-=1
   end
+  
+  D.(:tagu) do |&block|
+    Tagu.define(&block)
+  end
 
   D.(:tag) do |m, **opts, &block|
     if SINGLES.include?(m.to_s)
@@ -33,7 +39,7 @@ module Tagu
   end
 
   %w[html head body div p style script h1 h2 h3 h4 h5 h6 a img span b i strong em br link hr meta].each do |m, **opts, &block|
-      D.(m){ |**opts, &block| tag(m, **opts, &block) }  
+      D.(m.to_s+?!){ |**opts, &block| tag(m, **opts, &block) }  
   end
 end
 

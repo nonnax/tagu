@@ -5,6 +5,9 @@ require_relative 'lib/tagu'
 require 'irb'
 # test
 # Tagu.define do
+tm,self_m=Tagu.methods, methods.sort
+pp (tm & self_m).sort.each_slice(7).to_a
+
 tagu do
   html! do
     head! do
@@ -30,5 +33,5 @@ tagu do
     end
   end
 end
+.then{|s| puts s}
 
-puts Tagu.result

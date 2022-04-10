@@ -5,9 +5,9 @@
 # 
 require 'stringio'
 module Tagu
-  D,builder,SINGLES,lev = Object.method(:define_method), StringIO.new, %w[br hr link meta],0
+  D,builder,SINGLES,lev,indents = Object.method(:define_method), StringIO.new, %w[br hr link meta],0
   D.(:define){ |&block| builder.string=''; instance_eval(&block) }
-  D.(:tagu){ |&block| Tagu.define(&block); builder.string }
+  D.(:tagu){ |indent=false, &block| indents=indent; Tagu.define(&block); builder.string }
   
   %w[html head title body div p ul li style script h1 h2 h3 h4 h5 h6 a img span b i strong em br link hr meta]
   .each do |m, **opts, &block| D.(m.to_s+?!){ |*a, &block| tag(m, *a, &block) }  end
@@ -29,5 +29,5 @@ module Tagu
   D.(:result){ builder.string  }
   D.(:Q){|h| h.inject(""){|acc, (k, v)| acc<<' '<<[k, "'#{v}'"].join('=')}}
   D.(:tab){ "  "*lev }
-  D.(:_i){|&block| lev+=1; block.call; lev-=1 }  
+  D.(:_i){|&block| return block.() unless indents; lev+=1; block.(); lev-=1  }  
 end

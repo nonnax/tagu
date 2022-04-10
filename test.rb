@@ -32,6 +32,6 @@ tagu do
       end
     end
   end
-end
-.then{|s| puts s}
+end.
+then{|s| puts s}
 

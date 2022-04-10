@@ -6,7 +6,7 @@
 require 'stringio'
 module Tagu
   D,builder,SINGLES,lev = Object.method(:define_method), StringIO.new, %w[br hr link meta],0
-  D.(:define){ |&block| instance_eval(&block) }
+  D.(:define){ |&block| builder.string=''; instance_eval(&block) }
   D.(:tagu){ |&block| Tagu.define(&block); builder.string }
   
   %w[html head title body div p ul li style script h1 h2 h3 h4 h5 h6 a img span b i strong em br link hr meta]

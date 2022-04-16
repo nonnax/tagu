@@ -18,12 +18,11 @@ module Tagu
     # _name! into id='name'
      opts=a.grep(Hash).pop || {}
      if match=m.match(/^_(.+[^!])$/)
-      send(:div!, opts.merge(class: match.to_a.pop) , &block) 
+      opts.merge!(class: match.to_a.pop)      
      elsif match=m.match(/^_(.+)!$/)
-      send(:div!, opts.merge(id: match.to_a.pop) , &block)
-     else
-      send(:div!, opts.merge(id: m) , &block)
+      opts.merge!(id: match.to_a.pop)
      end
+     send(:div!, opts, &block) 
   end
   
   private

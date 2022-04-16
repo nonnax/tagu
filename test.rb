@@ -8,18 +8,21 @@ require 'irb'
 tm,self_m=Tagu.methods, methods.sort
 pp (tm & self_m).sort.each_slice(7).to_a
 
-tagu do
+tagu(true) do
   html! do
     head! do
       title! 'this is cool'
       link! rel: 'stylesheet', href: '/css/style.css'
     end
     body! do
-      div!(class: 'main') do
+      _header! do 
+        'aha'
+      end
+      _main! do
           br!
           hr!
           a!('link', href: '/' )
-          p!(class: 'item') do
+          _item do
             span! 'what', class: 'waklass'
             span! 'who'
             ul! do 

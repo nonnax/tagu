@@ -45,3 +45,9 @@ module Tagu
   D.(:tab){ "  "*lev }
   D.(:_i){|&block| return block.() unless indents; lev+=1; block.(); lev-=1  }  
 end
+
+class NilClass
+  def method_missing(m, *a, &block)
+    p [m, caller]
+  end
+end

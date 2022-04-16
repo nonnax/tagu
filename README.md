@@ -17,5 +17,5 @@ bang (!) suffixed tags to avoid method name clashes
 
 # div method shortcuts 
 
-     _name into `class`='name' 
-    _name! into `id`='name'
+     _name{} into `<div class='name'></div>`
+    _name!{} into `<div id='name'></div>`

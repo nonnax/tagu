@@ -26,7 +26,7 @@ tagu(true) do
           br!
           hr!          
           5.times do |n|
-              a!(n, href: '/'+n.to_s )
+            a!(n, href: '/'+n.to_s )
           end
           _item do
             span! 'what', class: 'waklass'
@@ -37,10 +37,10 @@ tagu(true) do
             end
             'hi'
           end
-         'hello'
+         span!{'hello '*3 }
       end
     end
   end
 end.
-then{|s| puts s}
+then{|s| puts s.to_s}
 

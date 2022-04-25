@@ -5,6 +5,7 @@
 # 
 require 'stringio'
 module Tagu
+  module_function
   D,builder,SINGLES,lev,indents = Object.method(:define_method), StringIO.new, %w[br hr link meta],0
   D.(:define){ |&block| builder.string=''; instance_eval(&block) }
   D.(:tagu){ |indent=false, &block| indents=indent; Tagu.define(&block); builder.string }
@@ -34,7 +35,7 @@ module Tagu
     builder.puts "%s<%s%s>" % [tab, m, Q(opts)]
     _i do
       text = block ? block.call : a.pop
-      builder.puts "%s%s" % [tab, text] if text
+      builder.puts "%s%s" % [tab, text] if text.is_a?(String)
     end
     builder.puts "%s</%s>" % [tab, m]
   end  
@@ -45,8 +46,3 @@ module Tagu
   D.(:_i){|&block| return block.() unless indents; lev+=1; block.(); lev-=1  }  
 end
 
-class NilClass
-  def method_missing(m, *a, &block)
-    p [m, caller]
-  end
-end
